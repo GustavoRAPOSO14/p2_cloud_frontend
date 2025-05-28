@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cadastro de Aluno</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2rem;
+    }
+    input, textarea, button {
+      display: block;
+      width: 300px;
+      margin-bottom: 1rem;
+      padding: 8px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Cadastro de Aluno</h1>
+  <form id="formAluno">
+    <input type="number" name="id_aluno" placeholder="ID do aluno" required />
+    <input type="text" name="nome_completo" placeholder="Nome completo" required />
+    <input type="text" name="usuario_acesso" placeholder="Usuário de acesso" required />
+    <input type="password" name="senha" placeholder="Senha" required />
+    <input type="email" name="email_aluno" placeholder="Email do aluno" required />
+    <textarea name="observacao" placeholder="Observação (opcional)"></textarea>
+    <input type="date" name="data_cadastro" required />
+    <button type="submit">Cadastrar</button>
+  </form>
+
+  <p id="mensagem"></p>
+
+  <script>
+    const form = document.getElementById('formAluno');
+    const mensagem = document.getElementById('mensagem');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const dados = {
+        id_aluno: parseInt(form.id_aluno.value),
+        nome_completo: form.nome_completo.value,
+        usuario_acesso: form.usuario_acesso.value,
+        senha: form.senha.value,
+        email_aluno: form.email_aluno.value,
+        observacao: form.observacao.value || null,
+        data_cadastro: form.data_cadastro.value
+      };
+
+      try {
+        const resposta = await fetch('https://p2-cloud-backend.onrender.com/aluno', { // Troque pela sua URL real
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(dados)
+        });
+
+        const resultado = await resposta.json();
+        if (resposta.ok) {
+          mensagem.textContent = "Aluno cadastrado com sucesso!";
+          form.reset();
+        } else {
+          mensagem.textContent = "Erro ao cadastrar: " + (resultado.mensagem || resposta.statusText);
+        }
+      } catch (err) {
+        console.error(err);
+        mensagem.textContent = "Erro na requisição.";
+      }
+    });
+  </script>
+</body>
+</html>
